@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Todo List</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-weight: 300;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        #task-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        #task-count {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #4a5568;
+            margin: 0;
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3);
+            min-width: 120px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(66, 153, 225, 0.4);
+            background: linear-gradient(135deg, #3182ce 0%, #2c5aa0 100%);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(66, 153, 225, 0.3);
+        }
+
+        #remove-button {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            box-shadow: 0 4px 15px rgba(245, 101, 101, 0.3);
+        }
+
+        #remove-button:hover {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            box-shadow: 0 6px 20px rgba(245, 101, 101, 0.4);
+        }
+
+        #remove-button:active {
+            box-shadow: 0 2px 10px rgba(245, 101, 101, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        button:disabled:hover {
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        #task-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            color: #2d3748;
+            margin: 20px auto;
+            display: block;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        #task-input::placeholder {
+            color: #a0aec0;
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        #task-input:focus {
+            outline: none;
+            border-color: #4299e1;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
+            box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.15), 0 6px 20px rgba(66, 153, 225, 0.2);
+            transform: translateY(-2px);
+        }
+
+        #task-input:hover:not(:focus) {
+            border-color: #cbd5e0;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+
+        #task-list {
+            margin-top: 15px;
+        }
+
+        #task-list div {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        #task-list div:hover {
+            background: linear-gradient(135deg, #edf2f7 0%, #e2e8f0 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        #task-list input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: #4299e1;
+        }
+
+        #task-list span {
+            flex: 1;
+            font-size: 1rem;
+            color: #2d3748;
+            transition: all 0.2s ease;
+        }
+
+        #task-list button {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            min-width: auto;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            box-shadow: 0 2px 8px rgba(245, 101, 101, 0.3);
+        }
+
+        #task-list button:hover {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            box-shadow: 0 3px 12px rgba(245, 101, 101, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <h1>My Todo List</h1>
+
+    <div id="task-container">
+        <p id="task-count">No tasks yet</p>
+        <div id="task-list"></div>
+    </div>
+
+    <input type="text" id="task-input" placeholder="Enter a task...">
+
+    <!-- Buttons -->
+    <div class="button-container">
+        <button id="add-button">Add Task</button>
+        <button id="remove-button">Remove Task</button>
+    </div>
+    
+    <script>
+        // Array to store all tasks
+        let tasks = [];
+
+        function addTask(task) {
+            // Get the input element
+            let inputElement = document.getElementById("task-input");
+
+            // Get the value of the input element
+            let taskText = inputElement.value;
+
+            if(taskText === "") {
+                alert("Please enter a task");
+                return;
+            }
+            
+            // Add to array as an object with text and completed status
+            tasks.push({
+                text: taskText,
+                completed: false
+            });
+
+            // Clear input
+            inputElement.value = "";
+
+            // Update display
+            displayTasks();
+        }
+
+        // Connect button
+        document.getElementById("add-button").addEventListener("click", addTask);
+
+        function displayTasks() {
+            // Get the task container element
+            let taskListElement = document.getElementById("task-list");
+
+            // Clear the container
+            taskListElement.innerHTML = "";
+            
+            // Display tasks
+           for(let i = 0; i < tasks.length; i++) {
+            let taskItem = document.createElement("div");
+            taskItem.style.padding = "10px";
+
+            // Create checkbox
+            let checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.style.marginRight = "10px";
+            checkbox.style.transform = "scale(1.2)";
+            checkbox.checked = tasks[i].completed; // Set initial state
+
+            // Create task text
+            let taskText = document.createElement("span");
+            taskText.textContent = tasks[i].text;
+            
+            // Apply initial styling based on completed status
+            if (tasks[i].completed) {
+                taskText.style.textDecoration = "line-through";
+                taskText.style.opacity = "0.6";
+            }
+
+            // Add event listener to checkbox
+            checkbox.addEventListener("change", function() {
+                // Update the task's completed status in the array
+                tasks[i].completed = this.checked;
+                
+                if (this.checked) {
+                    taskText.style.textDecoration = "line-through";
+                    taskText.style.opacity = "0.6";
+                } else {
+                    taskText.style.textDecoration = "none";
+                    taskText.style.opacity = "1";
+                }
+            });
+
+            let deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.style.marginLeft = "10px";
+
+            deleteButton.addEventListener("click", () => deleteTask(i));
+
+            taskItem.appendChild(checkbox);
+            taskItem.appendChild(taskText);
+            taskItem.appendChild(deleteButton);
+            taskListElement.appendChild(taskItem);
+            }
+            
+            document.getElementById("task-count").textContent = "Tasks: " + tasks.length;
+        }
+
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            displayTasks();
+        }
+        
+        // Allow Enter key to trigger the add task function
+        document.getElementById("task-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+            addTask(event.target.value);
+            }
+        });
+
+        // Display initial tasks
+        displayTasks();
+
+    </script>
+</body>
+</html>
